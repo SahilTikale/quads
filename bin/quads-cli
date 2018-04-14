@@ -12,9 +12,9 @@ import urllib2
 import yaml
 
 from quads_config import quads_load_config
-from hil.cli.client_setup import setup_http_client
+#from hil.cli.client_setup import setup_http_client
 
-hil_client_lib = setup_http_client()[0]
+#hil_client_lib = setup_http_client()[0]
 
 logger = logging.getLogger('quads')
 ch = logging.StreamHandler(sys.stdout)
