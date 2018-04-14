@@ -6,7 +6,7 @@ import os
 import requests
 import yaml
 
-from quad_config import quads_load_config
+from quads_config import quads_load_config
 
 #Parsing the quads config file
 #quads_config_file = os.path.dirname(__file__) + "/../conf/quads.yml"

@@ -11,7 +11,7 @@ import sys
 import urllib2
 import yaml
 
-from quad_config import quads_load_config
+from quads_config import quads_load_config
 from hil.cli.client_setup import setup_http_client
 
 hil_client_lib = setup_http_client()[0]
@@ -24,7 +24,6 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 def main(argv):
-    import pdb; pdb.set_trace()
     quads_config_file = os.path.dirname(__file__) + "/../conf/quads.yml"
     quads_config = quads_load_config(quads_config_file)
 
@@ -44,13 +43,14 @@ def main(argv):
     sys.path.append(os.path.dirname(__file__) + "/../lib")
     from Quads import Quads
 
-    if quads_config['allocator_activated']:
-        pass
-        
-
     defaultconfig = quads_config["data_dir"] + "/schedule.yaml"
     defaultstatedir = quads_config["data_dir"] + "/state"
     defaultmovecommand = "/bin/echo"
+    hil = None
+    if quads_config['allocator_activated']:
+        import initialize_hil
+        hil = initialize_hil.client 
+
 
     parser = argparse.ArgumentParser(description='Query current cloud for a given host')
     group = parser.add_mutually_exclusive_group()
@@ -103,10 +103,22 @@ def main(argv):
 
 # HIL Related code:
     group.add_argument(
-        '--ls-allocator', dest='lsallocator', action='store_true', default=None, help='Lists node allocator'
+        '--ls-allocator', dest='lsallocator', action='store_true', default=None, help='Outputs name of the external allocator'
+    )
+
+    group.add_argument(
+        '--ls-hil-nodes', dest='lsallnodes', action='store_true', default=None, help='lists all nodes available with HIL'
     )
     
     args = parser.parse_args()
+    if args.lsallnodes:
+        try:
+            all_nodes = hil.node.list('all')
+            for node in all_nodes:
+                print node
+        except AttributeError:
+            print "No external Allocator available. "
+        exit(0)
     if args.lsallocator:
         print quads_config["allocator_name"]
         exit(0)
