@@ -30,6 +30,6 @@ allocator_password: quads		# Password of username.
 
 * Copy the client library from [HIL client library code](https://github.com/CCI-MOC/hil/tree/master/hil/client) to the [QUADS library location](../lib/)
 
-* The [initialization script](../bin/#initialize_hil) fetches HIL specific parameters from configuration file of QUADS and does the necessary setup that is required to communicate with the HIL server. 
+* The [initialization script](#initialize_hil.py) fetches HIL specific parameters from configuration file of QUADS and does the necessary setup that is required to communicate with the HIL server. 
 
 
