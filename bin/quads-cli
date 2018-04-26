@@ -109,8 +109,35 @@ def main(argv):
     group.add_argument(
         '--ls-hil-nodes', dest='lsallnodes', action='store_true', default=None, help='lists all nodes available with HIL'
     )
-    
+
+    group.add_argument(
+        '--ls-allocated-nodes', dest='lsallocatednodes', action='store_true', default=None, help='lists nodes allocated to QUADS project with HIL'
+    )
+
+    group.add_argument(
+        '--ls-allocated-networks', dest='lsallocatednetworks', action='store_true', default=None, help='lists networks allocated to QUADS project with HIL'
+    )
+
+    project = quads_config["allocator_project_name"]
     args = parser.parse_args()
+    if args.lsallocatednetworks:
+        try:
+            alloc_net = hil.project.networks_in(project)
+            for net in alloc_net:
+                print net
+        except AttributeError:
+            print "No external Allocator available."
+        exit(0)
+
+    if args.lsallocatednodes:
+        try:
+            alloc_nodes = hil.project.nodes_in(project)
+            for node in alloc_nodes:
+                print node
+        except AttributeError:
+            print "No external Allocator available."
+        exit(0)
+
     if args.lsallnodes:
         try:
             all_nodes = hil.node.list('all')
