@@ -12,9 +12,7 @@ import urllib2
 import yaml
 
 from quads_config import quads_load_config
-#from hil.cli.client_setup import setup_http_client
 
-#hil_client_lib = setup_http_client()[0]
 
 logger = logging.getLogger('quads')
 ch = logging.StreamHandler(sys.stdout)
@@ -123,8 +121,12 @@ def main(argv):
     if args.lsallocatednetworks:
         try:
             alloc_net = hil.project.networks_in(project)
-            for net in alloc_net:
-                print net
+            print "List of Networks: "+str(alloc_net)
+            print " "
+            for net_name in alloc_net:
+                net = hil.network.show(net_name)
+                print net_name +" : "+ str(net)
+                print " "
         except AttributeError:
             print "No external Allocator available."
         exit(0)
@@ -132,8 +134,12 @@ def main(argv):
     if args.lsallocatednodes:
         try:
             alloc_nodes = hil.project.nodes_in(project)
-            for node in alloc_nodes:
-                print node
+            print "List of Nodes: "+str(alloc_nodes)
+            print " "
+            for node_name in alloc_nodes:
+                node = hil.node.show(node_name)
+                print node_name +" : "+ str(node)
+                print " "
         except AttributeError:
             print "No external Allocator available."
         exit(0)
