@@ -115,6 +115,8 @@ def main(argv):
     group.add_argument(
         '--ls-allocated-networks', dest='lsallocatednetworks', action='store_true', default=None, help='lists networks allocated to QUADS project with HIL'
     )
+    #To be added as an extra flag when defining hosts in Quads
+    parser.add_argument('--allocator', dest='allocator', type=str, default=None, help='Defined alloactor for a host')
 
     project = quads_config["allocator_project_name"]
     args = parser.parse_args()
@@ -326,7 +328,13 @@ def main(argv):
             exit(1)
         url = quads_config["quads_base_url"] + "api/v1/host"
         headers = { 'Content-Type': 'application/json' }
-        data = { "host": args.hostresource, "cloud": args.hostcloud, "type": args.hosttype, "force": args.force }
+        data = { 
+                "host": args.hostresource, 
+                "cloud": args.hostcloud, 
+                "type": args.hosttype,
+                "allocator": args.allocator,
+                "force": args.force 
+                }
         r = requests.post(url, data, headers=headers, timeout=120)
         js = r.json()
         if 'result' in js:
