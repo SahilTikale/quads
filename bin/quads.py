@@ -278,7 +278,7 @@ def main():
 
     if args.hostresource:
         result = quads.update_host(args.hostresource, args.hostcloud,
-                                   args.hosttype, args.force)
+                                   args.hosttype, args.hostallocator, args.force)
         for r in result:
             print r
         if len(result) == 0:

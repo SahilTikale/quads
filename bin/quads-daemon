@@ -206,6 +206,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             result = quads.update_host(data['host'][0],
                                        data['cloud'][0],
                                        data['type'][0],
+                                       data['allocator'][0],
                                        data['force'][0] == 'True')
             write_lock.release()
             self.wfile.write(json.dumps({'result': result}))

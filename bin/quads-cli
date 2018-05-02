@@ -116,7 +116,7 @@ def main(argv):
         '--ls-allocated-networks', dest='lsallocatednetworks', action='store_true', default=None, help='lists networks allocated to QUADS project with HIL'
     )
     #To be added as an extra flag when defining hosts in Quads
-    parser.add_argument('--allocator', dest='allocator', type=str, default=None, help='Defined alloactor for a host')
+    parser.add_argument('--allocator', dest='hostallocator', type=str, default="QUADS", help='Defined alloactor for a host')
 
     project = quads_config["allocator_project_name"]
     args = parser.parse_args()
@@ -332,7 +332,7 @@ def main(argv):
                 "host": args.hostresource, 
                 "cloud": args.hostcloud, 
                 "type": args.hosttype,
-                "allocator": args.allocator,
+                "allocator": args.hostallocator,
                 "force": args.force 
                 }
         r = requests.post(url, data, headers=headers, timeout=120)
