@@ -118,6 +118,8 @@ def main(argv):
     #To be added as an extra flag when defining hosts in Quads
     parser.add_argument('--allocator', dest='hostallocator', type=str, default="QUADS", help='Defined alloactor for a host')
 
+    group.add_argument('--fetch-allocated-nodes', dest='fetchallocatednodes', action='store_true', default=None, help="Fetches nodes from external allocator")
+
     project = quads_config["allocator_project_name"]
     args = parser.parse_args()
     if args.lsallocatednetworks:
@@ -157,6 +159,40 @@ def main(argv):
     if args.lsallocator:
         print quads_config["allocator_name"]
         exit(0)
+    if args.fetchallocatednodes:
+        #import pdb; pdb.set_trace()
+
+        try:
+            alloc_nodes = hil.project.nodes_in(project)
+            print "Nodes fetched from HIL: "+str(alloc_nodes)
+            print "Adding to QUADS."
+            for node_name in alloc_nodes:
+                url = quads_config["quads_base_url"] + "api/v1/host"
+                headers = { 'Content-Type': 'application/json' }
+                data = {
+                        "host": node_name,
+                        "cloud": args.hostcloud or 'cloud01',
+                        "type": args.hosttype or 'vendor_fromHIL',
+                        "allocator": args.hostallocator or "HIL",
+                        "force": args.force
+                    }
+                r = requests.post(url, data, headers=headers, timeout=120)
+                js = r.json()
+                if 'result' in js:
+                    if len(js['result']) == 0:
+                        print "Unexpected error"
+                        exit(1)
+                    for result in js['result']:
+                        print result
+                    continue
+                print "No result received"
+        except AttributeError:
+            print "No external Allocator available"
+        exit(0)
+
+
+
+
     if args.lshosts:
         url = quads_config["quads_base_url"] + "api/v1/lshosts/"
         response = urllib2.urlopen(url, timeout=120)
