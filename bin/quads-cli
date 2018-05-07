@@ -98,6 +98,9 @@ def main(argv):
     parser.add_argument('--os-control-scale', dest='controlscale',type=int,default=None, help='Number of controller nodes for OpenStack deployment')
     parser.add_argument('--os-compute-scale', dest='computescale',type=int,default=None, help='Number of compute nodes for OpenStack deployment')
     parser.add_argument('--host-type', dest='hosttype',type=str, default=None, help='Model/Make/Type of host DellR620  for example')
+    #Additional argument for defining hosts
+    parser.add_argument('--host-interfaces', dest='hostinterfaces',type=str, default=None, help='interfacename:mac_addresses separated by whitespace')
+
 
 # HIL Related code:
     group.add_argument(
@@ -167,13 +170,20 @@ def main(argv):
             print "Nodes fetched from HIL: "+str(alloc_nodes)
             print "Adding to QUADS."
             for node_name in alloc_nodes:
+                node_info = hil.node.show(node_name)
+                node_interfaces = {}
+                iface_list = node_info['nics']
+                for nic in iface_list:
+                    node_interfaces[nic['label']] = nic['macaddr']
+
                 url = quads_config["quads_base_url"] + "api/v1/host"
                 headers = { 'Content-Type': 'application/json' }
                 data = {
                         "host": node_name,
                         "cloud": args.hostcloud or 'cloud01',
                         "type": args.hosttype or 'vendor_fromHIL',
-                        "allocator": args.hostallocator or "HIL",
+                        "interfaces": str(node_interfaces),
+                        "allocator": "HIL" or args.hostallocator,
                         "force": args.force
                     }
                 r = requests.post(url, data, headers=headers, timeout=120)
@@ -183,7 +193,7 @@ def main(argv):
                         print "Unexpected error"
                         exit(1)
                     for result in js['result']:
-                        print result
+                        print result + " Successfully added "+node_name+" from HIL to QUADS"
                     continue
                 print "No result received"
         except AttributeError:
@@ -358,7 +368,25 @@ def main(argv):
                         print key + ": " + k[key]
             exit(0)
 
+    if args.hostinterfaces:
+        interface_dict = {}
+        interface_list = args.hostinterfaces.split()
+        for interface in interface_list:
+            interface_pair = interface.split(':', 1)
+            interface_dict[interface_pair[0]] = interface_pair[1]
+
+#        print interface_dict
+#        print " "
+
+#        print args.hostinterfaces
+#        exit(0)
+
     if args.hostresource:
+        if args.hostinterfaces is None:
+            print "at least one interface required,"
+            print "To register single interface: use --host-interface eth0:aa:bb:cc:dd:ee:ff"
+            print "To register multiple interfaces: use --host-interface 'eth0:aa:bb:cc:dd:ee:ff eth1:aa:bb:cc:dd:ee:f1' "
+            exit(1)
         if args.cloudresource:
             print "--define-cloud and --define-host are mutually exclusive."
             exit(1)
@@ -368,6 +396,7 @@ def main(argv):
                 "host": args.hostresource, 
                 "cloud": args.hostcloud, 
                 "type": args.hosttype,
+                "interfaces": str(interface_dict), # send dictionary does not work, the daemon retains on the key.
                 "allocator": args.hostallocator,
                 "force": args.force 
                 }

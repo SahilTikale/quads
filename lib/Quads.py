@@ -405,7 +405,7 @@ class Quads(object):
             return ["ERROR"]
 
     # update a host resource
-    def update_host(self, hostresource, hostcloud, hosttype, hostallocator, forceupdate):
+    def update_host(self, hostresource, hostcloud, hosttype, hostinterfaces, hostallocator, forceupdate):
         # define or update a host resouce
         self.thread_lock.acquire()
         if hostcloud is None:
@@ -440,7 +440,7 @@ class Quads(object):
                 self.quads.history.data[hostresource][int(time.time())] = hostcloud
             else:
                 self.quads.hosts.data[hostresource] = { "cloud": hostcloud,
-                                                       "interfaces": {},
+                                                       "interfaces": hostinterfaces,
                                                        "schedule": {},
                                                        "allocator": hostallocator,
                                                        "type": hosttype}
