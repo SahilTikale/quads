@@ -119,9 +119,11 @@ def main(argv):
         '--ls-allocated-networks', dest='lsallocatednetworks', action='store_true', default=None, help='lists networks allocated to QUADS project with HIL'
     )
     #To be added as an extra flag when defining hosts in Quads
-    parser.add_argument('--allocator', dest='hostallocator', type=str, default="QUADS", help='Defined alloactor for a host')
+    parser.add_argument('--allocator', dest='allocator', type=str, default="QUADS", help='Defined allocator for a host or cloud')
 
     group.add_argument('--fetch-allocated-nodes', dest='fetchallocatednodes', action='store_true', default=None, help="Fetches nodes from external allocator")
+    import pdb; pdb.set_trace()
+    group.add_argument('--fetch-allocated-networks', dest='fetchallocatednetworks', action='store_true', default=None, help="Fetches networks from external allocator")
 
     project = quads_config["allocator_project_name"]
     args = parser.parse_args()
@@ -163,8 +165,6 @@ def main(argv):
         print quads_config["allocator_name"]
         exit(0)
     if args.fetchallocatednodes:
-        #import pdb; pdb.set_trace()
-
         try:
             alloc_nodes = hil.project.nodes_in(project)
             print "Nodes fetched from HIL: "+str(alloc_nodes)
@@ -183,7 +183,7 @@ def main(argv):
                         "cloud": args.hostcloud or 'cloud01',
                         "type": args.hosttype or 'vendor_fromHIL',
                         "interfaces": str(node_interfaces),
-                        "allocator": "HIL" or args.hostallocator,
+                        "allocator": "HIL" or args.allocator,
                         "force": args.force
                     }
                 r = requests.post(url, data, headers=headers, timeout=120)
@@ -201,7 +201,38 @@ def main(argv):
         exit(0)
 
 
-
+    if args.fetchallocatednetworks:
+        try:
+            all_net = hil.project.networks_in(project)
+            print "Networks fetched from HIL: "+str(all_net)
+            print "Defining cloud for each network."
+            for net in all_net:
+                net_info = hil.network.show(net)
+                vlan_no = net_info['channels'][1].split('/')[1]
+                url = quads_config["quads_base_url"] + "api/v1/cloud"
+                headers = { 'Content-Type': 'application/json' }
+                data = { "cloud": net_info['name'],
+                        "description": "Cloud Belongs to HIL",
+                        "owner": args.cloudowner,
+                        "cc": args.ccusers,
+                        "qinq": args.qinq,
+                        "wipe": args.wipe,
+                        "allocator": "HIL",
+                        "ticket": args.cloudticket,
+                        "force": args.force }
+                r = requests.post(url, data, headers=headers, timeout=120)
+                js = r.json()
+                if 'result' in js:
+                    if len(js['result']) == 0:
+                        print "Unexpected error"
+                        exit(1)
+                    for result in js['result']:
+                        print result+ " Successfully defined new cloud: "+net_info['name']
+                    continue
+                print "No result received"
+        except AttributeError:
+            print "No external Allocator available."
+    exit(0)
 
     if args.lshosts:
         url = quads_config["quads_base_url"] + "api/v1/lshosts/"
@@ -397,7 +428,7 @@ def main(argv):
                 "cloud": args.hostcloud, 
                 "type": args.hosttype,
                 "interfaces": str(interface_dict), # send dictionary does not work, the daemon retains on the key.
-                "allocator": args.hostallocator,
+                "allocator": args.allocator,
                 "force": args.force 
                 }
         r = requests.post(url, data, headers=headers, timeout=120)
@@ -421,6 +452,7 @@ def main(argv):
                 "cc": args.ccusers,
                 "qinq": args.qinq,
                 "wipe": args.wipe,
+                "allocator": args.allocator,
                 "ticket": args.cloudticket,
                 "force": args.force }
         r = requests.post(url, data, headers=headers, timeout=120)

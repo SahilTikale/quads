@@ -454,7 +454,7 @@ class Quads(object):
                 return ["ERROR"]
 
     # update a cloud resource
-    def update_cloud(self, cloudresource, description, forceupdate, cloudowner,
+    def update_cloud(self, cloudresource, description, allocator, forceupdate, cloudowner,
                      ccusers, cloudticket, qinq, wipe='1', postconfig=None, version=None, puddle=None,
                      controlscale=None, computescale=None):
         # define or update a cloud resource
@@ -513,6 +513,7 @@ class Quads(object):
                             return [cloudresource + " is used in schedule " + str(s) + " for " + h,
                                                     "Cloud cannot be reused while current or future schedules are in place."]
             if cloudresource not in self.quads.cloud_history.data:
+                import pdb; pdb.set_trace()
                 self.quads.cloud_history.data[cloudresource] = {}
             self.quads.cloud_history.data[cloudresource][int(time.time())] = {'ccusers':copy.deepcopy(ccusers),
                                                                     'description':description,
@@ -520,6 +521,7 @@ class Quads(object):
                                                                     'owner':cloudowner,
                                                                     'qinq':qinq,
                                                                     'wipe':wipe,
+                                                                    'allocator':allocator,
                                                                     'ticket':cloudticket}
             self.quads.clouds.data[cloudresource] = { "description": description,
                                                      "networks":{},
@@ -528,6 +530,7 @@ class Quads(object):
                                                      "ticket": cloudticket,
                                                      "qinq": qinq,
                                                      "wipe": wipe,
+                                                     "allocator": allocator,
                                                      "post_config": post_config
                                                     }
             if self.write_data():
