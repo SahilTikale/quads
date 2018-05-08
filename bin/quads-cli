@@ -100,6 +100,8 @@ def main(argv):
     parser.add_argument('--host-type', dest='hosttype',type=str, default=None, help='Model/Make/Type of host DellR620  for example')
     #Additional argument for defining hosts
     parser.add_argument('--host-interfaces', dest='hostinterfaces',type=str, default=None, help='interfacename:mac_addresses separated by whitespace')
+    #Additional argument for associating vlan no. for clouds
+    parser.add_argument('--cloud-vlan', dest='cloudvlan',type=str, default=None, help='permissible integer range for vlans')
 
 
 # HIL Related code:
@@ -122,7 +124,6 @@ def main(argv):
     parser.add_argument('--allocator', dest='allocator', type=str, default="QUADS", help='Defined allocator for a host or cloud')
 
     group.add_argument('--fetch-allocated-nodes', dest='fetchallocatednodes', action='store_true', default=None, help="Fetches nodes from external allocator")
-    import pdb; pdb.set_trace()
     group.add_argument('--fetch-allocated-networks', dest='fetchallocatednetworks', action='store_true', default=None, help="Fetches networks from external allocator")
 
     project = quads_config["allocator_project_name"]
@@ -200,6 +201,15 @@ def main(argv):
             print "No external Allocator available"
         exit(0)
 
+    if args.cloudvlan:
+        if int(args.cloudvlan) < 1 or int(args.cloudvlan) > 4095:
+            print "Invalid vlan number. Please provide a valid vlan number."
+            exit(1)
+    elif args.fetchallocatednetworks:
+        pass
+    else:
+        print "using --cloud-vlan flag, please provide a valid number for defining this cloud."
+        exit(1)
 
     if args.fetchallocatednetworks:
         try:
@@ -218,6 +228,7 @@ def main(argv):
                         "qinq": args.qinq,
                         "wipe": args.wipe,
                         "allocator": "HIL",
+                        "networks": vlan_no,
                         "ticket": args.cloudticket,
                         "force": args.force }
                 r = requests.post(url, data, headers=headers, timeout=120)
@@ -232,7 +243,7 @@ def main(argv):
                 print "No result received"
         except AttributeError:
             print "No external Allocator available."
-    exit(0)
+        exit(0)
 
     if args.lshosts:
         url = quads_config["quads_base_url"] + "api/v1/lshosts/"
@@ -442,7 +453,6 @@ def main(argv):
             exit(0)
         print "No result received"
         exit(0)
-
     if args.cloudresource:
         url = quads_config["quads_base_url"] + "api/v1/cloud"
         headers = { 'Content-Type': 'application/json' }
@@ -453,8 +463,10 @@ def main(argv):
                 "qinq": args.qinq,
                 "wipe": args.wipe,
                 "allocator": args.allocator,
+                "networks": args.cloudvlan,
                 "ticket": args.cloudticket,
                 "force": args.force }
+        import pdb; pdb.set_trace()
         r = requests.post(url, data, headers=headers, timeout=120)
         js = r.json()
         if 'result' in js:

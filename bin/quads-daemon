@@ -333,6 +333,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             result = quads.update_cloud(data['cloud'][0],
                                        data['description'][0],
                                        data['allocator'][0],
+                                       data['networks'][0],
                                        data['force'][0] == 'True',
                                        data['owner'][0],
                                        data['cc'][0],
