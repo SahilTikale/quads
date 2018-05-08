@@ -26,6 +26,8 @@ if [ ! -e $(dirname $0)/load-config.sh ]; then
     exit 1
 fi
 
+#** Following function reads the ../conf/quads.yml **
+# and processes it to be consumed in a shell script.
 source $(dirname $0)/load-config.sh
 
 quads=${quads["install_dir"]}/bin/quads-cli
@@ -33,8 +35,8 @@ bindir=${quads["install_dir"]}/bin
 data_dir=${quads["data_dir"]}
 lockdir=$data_dir/lock
 untouchable_hosts=${quads["untouchable_hosts"]}
-ipmi_username=${quads["ipmi_username"]}
-ipmi_password=${quads["ipmi_password"]}
+ipmi_username=${quads["ipmi_username"]} # Not required with HIL
+ipmi_password=${quads["ipmi_password"]} # Not required with HIL
 ipmi_cloud_username_id=${quads["ipmi_cloud_username_id"]}
 spare_pool_name=${quads["spare_pool_name"]}
 
@@ -62,10 +64,13 @@ else
     rebuild=false
 fi
 
+#** Script that makes changes to the switch **
+# This will get replaced by HIL
 expect_script=$bindir/juniper-set-port.exp
 
 declare -A offsets=( ["em1"]="0" ["em2"]="1" ["em3"]="2" ["em4"]="3")
 
+#** Not required with HIL. HIL provides this information. **
 configdir=$data_dir/ports
 
 if [ ! -f $configdir/$host_to_move ]; then
@@ -80,12 +85,14 @@ for redalert in $untouchable_hosts ; do
     fi
 done
 
+# ??? I don't know what is the purpose of this. ???
 qinq=$($quads --cloud-only $new_cloud --ls-qinq)
 
 if [ -z "$qinq" ]; then
     qinq=0
 fi
 
+# ** This for loop will be replaced by calls to HIL. **
 for line in $(cat $configdir/$host_to_move); do
     interface=$(echo $line | awk -F, '{ print $1 }')
     switchip=$(echo $line | awk -F, '{ print $3 }')
@@ -139,6 +146,9 @@ fi
 
 hammer user update --login $new_cloud --password $foreman_user_password
 
+# ** Following code will not be required with HIL **
+# HIL prevents unauthorized access to nodes. 
+
 #### END FOREMAN VIEWS
 #### BEGIN IPMI ACCOUNT RESET
 # this resets the user IPMI account password to the foreman password.
@@ -172,6 +182,7 @@ if $rebuild ; then
 
     # perform host rebuild, in future the OS here should be a variable, fix me.
     hammer host update --name $host_to_move --build 1 --operatingsystem "RHEL 7"
+    #Simply call HIL with node power on and node power off commands.
     ipmitool -I lanplus -H mgmt-$host_to_move -U $ipmi_username -P $ipmi_password chassis power off
     sleep 30
     ipmitool -I lanplus -H mgmt-$host_to_move -U $ipmi_username -P $ipmi_password chassis power on

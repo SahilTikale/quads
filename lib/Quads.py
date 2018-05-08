@@ -453,6 +453,36 @@ class Quads(object):
                 self.thread_lock.release()
                 return ["ERROR"]
 
+    def modify_host(self, hostresource, **kwargs):
+        """ Updates the attributes of an already defined host.
+        writing a separate function to keep the workflow clean.
+        Also, I (Sahil: Intern from BU) feel that some attributes 
+        of the host (or cloud) should be immutable to track its 
+        history. Eg. name of the cloud.
+        Do not wish to make to many changes to original update_host function.
+        Hence writing a new one. Can be merged later if seemed fit. 
+        """
+        self.thread_lock.acquire()
+        if 'cloud' in kwargs.keys():
+            hostcloud = kwargs['cloud']
+        if hostresource not in self.quads.hosts.data:
+            self.thread_lock.release()
+            return ["Unknown host: use --define-host to add new hosts"]
+        if hostcloud is not None:
+            if hostcloud not in self.quads.clouds.data:
+                self.thread_lock.release()
+                return ["Unknown cloud : %s" % hostcloud,
+                        "Define it first using:  --define-cloud"]
+
+            self.quads.hosts.data[hostresource]['cloud'] = hostcloud
+            self.quads.history.data[hostresource][int(time.time())] = hostcloud
+            if self.write_data():
+                self.thread_lock.release()
+                return ["OK"]
+            else:
+                self.thread_lock.release()
+                return ["ERROR"]
+
     # update a cloud resource
     def update_cloud(self, cloudresource, description, allocator, networks,  forceupdate, cloudowner,
                      ccusers, cloudticket, qinq, wipe='1', postconfig=None, version=None, puddle=None,
