@@ -27,6 +27,7 @@ import fcntl
 import errno
 import threading
 import QuadsData
+import initialize_hil
 
 class Quads(object):
     def __init__(self, config, statedir, movecommand, datearg, syncstate,
@@ -46,6 +47,8 @@ class Quads(object):
         self.quads = QuadsData.QuadsData()
         self.read_data()
         self.history_init()
+
+
 
         if syncstate or not datearg:
             self.sync_state()
@@ -883,6 +886,19 @@ class Quads(object):
             self.read_data()
         hosttype = self.quads.hosts.data[hostname]['type']
         return hosttype
+
+    def get_host_info(self, hostname):
+        if self.config_newer_than_data():
+            self.read_data()
+        hostinfo = self.quads.hosts.data[hostname]
+        return hostinfo
+
+    def get_cloud_info(self, cloudname):
+        if self.config_newer_than_data():
+            self.read_data()
+        cloudinfo = self.quads.clouds.data[cloudname]
+        return cloudinfo
+
 
     # Method to get the number of hosts of each type to be returned as a
     # dictionary

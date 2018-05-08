@@ -103,6 +103,9 @@ def main(argv):
     parser.add_argument('--host-interfaces', dest='hostinterfaces',type=str, default=None, help='interfacename:mac_addresses separated by whitespace')
     #Additional argument for associating vlan no. for clouds
     parser.add_argument('--cloud-vlan', dest='cloudvlan',type=str, default=None, help='permissible integer range for vlans')
+    #Gets all info related to given host
+    group.add_argument('--show-host', dest='hostinfo', type=str, default=None, help='All information regarding host')
+    group.add_argument('--show-cloud', dest='cloudinfo', type=str, default=None, help='All information regarding cloud')
 
 
 # HIL Related code:
@@ -466,6 +469,29 @@ def main(argv):
             exit(0)
         print "No result received"
         exit(0)
+    if args.hostinfo:
+        url = quads_config["quads_base_url"] + "api/v1/allhostinfo"
+        headers = { 'Content-Type': 'application/json' }
+        data = { "host": args.hostinfo }
+        r = requests.post(url, data, headers=headers, timeout=120)
+        js = r.json()
+        if 'result' in js:
+            if len(js['result']) == 0:
+                exit(0)
+            print js['result']
+        exit(0)
+    if args.cloudinfo:
+        url = quads_config["quads_base_url"] + "api/v1/allcloudinfo"
+        headers = { 'Content-Type': 'application/json' }
+        data = { "cloud": args.cloudinfo }
+        r = requests.post(url, data, headers=headers, timeout=120)
+        js = r.json()
+        if 'result' in js:
+            if len(js['result']) == 0:
+                exit(0)
+            print js['result']
+        exit(0)
+        
 
 
     if args.cloudresource:
