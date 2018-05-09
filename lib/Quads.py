@@ -890,13 +890,19 @@ class Quads(object):
     def get_host_info(self, hostname):
         if self.config_newer_than_data():
             self.read_data()
-        hostinfo = self.quads.hosts.data[hostname]
+        if hostname in self.quads.hosts.data:
+            hostinfo = self.quads.hosts.data[hostname]
+        else:
+            hostinfo = "Error: Host "+ hostname +" does not exist"
         return hostinfo
 
     def get_cloud_info(self, cloudname):
         if self.config_newer_than_data():
             self.read_data()
-        cloudinfo = self.quads.clouds.data[cloudname]
+        if cloudname in self.quads.clouds.data:
+            cloudinfo = self.quads.clouds.data[cloudname]
+        else:
+            cloudinfo = "Error: Cloud "+ cloudname +" does not exist"
         return cloudinfo
 
 
