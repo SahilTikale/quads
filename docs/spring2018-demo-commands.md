@@ -9,7 +9,7 @@ Spring 2018 status report
 * [Background](#background)
 * [DEMO 1 Datacenter in a laptop](#demo-1-datacenter-in-a-laptop)
 * Introducing HIL into QUADS(#introducing-hil-into-quads) 
-* List of calls added to QUADS (cli and api)(#list-of-calls-added-to-quads-cli-and-api)
+* New APIs and CLIs added to QUADS(#new-apis-and-clis-added-to-quads)
 * Changes made to QUADS datastructure (schedule.yaml)
 * DEMO: 
   * Inquiring about the allocator (HIL)
@@ -83,7 +83,7 @@ allocator_password: quads
  * Copied the [hil client library](https://github.com/CCI-MOC/hil/tree/master/hil/client) to quads as `quads/lib/hil_client_lib`
  * Added a script to `quads/bin/initialize_hil.py` that is used by `quads/bin/quads-cli` to setup connection to HIL using relevant credentials.
 
-## List of calls added to QUADS (cli and api)
+## New APIs and CLIs added to QUADS
  
 * Later following calls were added to `quads/bin/quads-cli`, some of them required writing **new APIs in QUADS**.
 ```bash
