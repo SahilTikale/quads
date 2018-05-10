@@ -25,7 +25,15 @@ Spring 2018 status report
 
 ## Background
 
-hello there
+* Hardware Isolation Layer or [HIL](https://github.com/CCI-MOC/hil) is a micro-service that performs the following functions:
+  * **Administer networks across different switches:** Provides users with a single switch agnostic interface to manage multitude of switches, without having to know any switch specific info.
+  * **Proxies OBM interface:** Users can power cycle nodes, set boot devices etc., without having to know the IPMI passwords. 
+  * **Provides user access control:** Unauthorized users cannot powercycle nodes or administer networks.
+  
+* Advantages for QUADS:
+  * QUADS can run on a wide variety of infrastructure. Not just juniper switches.
+  * No additional administration overhead. Set once, use multiple times (IPMI passwords, host information etc)
+  
 
 
 ## Setting up the datacenter with a switch named REDHAT and 10 nodes.
