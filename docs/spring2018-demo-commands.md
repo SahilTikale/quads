@@ -6,7 +6,7 @@ Spring 2018 status report
 
 ## Agenda:
 
-* Motivation: Why ?
+* [Background](#background)
 * DEMO: Reflecting the real setup in a datacenter.
 * Introducing HIL into QUADS 
 * List of calls added to QUADS (cli and api)
@@ -23,6 +23,9 @@ Spring 2018 status report
 ## If Time permits:
 * Things to do
 
+## Background
+
+hello there
 
 
 ## Setting up the datacenter with a switch named REDHAT and 10 nodes.
