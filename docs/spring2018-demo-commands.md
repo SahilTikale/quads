@@ -8,8 +8,8 @@ Spring 2018 status report
 
 * [Background](#background)
 * [DEMO 1 Datacenter in a laptop](#demo-1-datacenter-in-a-laptop)
-* Introducing HIL into QUADS(#introducing-hil-into-quads) 
-* New APIs and CLIs added to QUADS(#new-apis-and-clis-added-to-quads)
+* [Introducing HIL into QUADS](#introducing-hil-into-quads) 
+* [New APIs and CLIs added to QUADS](#new-apis-and-clis-added-to-quads)
 * Changes made to QUADS datastructure (schedule.yaml)
 * DEMO: 
   * Inquiring about the allocator (HIL)
