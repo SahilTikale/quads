@@ -8,8 +8,8 @@ Spring 2018 status report
 
 * [Background](#background)
 * [DEMO 1 Datacenter in a laptop](#demo-1-datacenter-in-a-laptop)
-* Introducing HIL into QUADS 
-* List of calls added to QUADS (cli and api)
+* Introducing HIL into QUADS(#introducing-hil-into-quads) 
+* List of calls added to QUADS (cli and api)(#list-of-calls-added-to-quads-cli-and-api)
 * Changes made to QUADS datastructure (schedule.yaml)
 * DEMO: 
   * Inquiring about the allocator (HIL)
@@ -63,6 +63,52 @@ sudo ip netns exec dhcp_100 ip a
 * Populating per host info like: ipmi password, network interface, mac address etc
 * Populating per switch authentication info: ip address, authentication info(user, password, public key etc)
 * Exact steps are not covered here for brevity. You can find them [on github](https://github.com/CCI-MOC/hil) or by refering to [HIL documentation](http://hil.readthedocs.io/en/latest/)
+
+## Introducing HIL into QUADS
+* Assuming that datacenter-in-a-laptop exists and HIL is setup correctly, install QUADS from github as [described here](https://github.com/SahilTikale/quads#installing-quads-from-github)
+* Following steps introduces HIL into QUADS setup as follows:
+* QUADS uses `quads/conf/quads.yml` to configure its changes. I added following additional parameters.
+```yaml
+#Enable external Host allocator
+allocator_activated: true   #If this is False all of the allocator related QUADS calls will return error stating so.
+allocator_name: HIL         #It can be a list if QUADS interfaces with multiple allocators. eg [REDHAT's-HIL, MOC-HIL, FLOCX]
+                            #For each allocator the following info may vary, or may need additional parameters.
+allocator_url: http://127.0.0.1:6000
+allocator_project_name: quads  # Project is how HIL shared nodes and networks among multiple users.
+allocator_username: quads_user # Quads can access nodes allocated only to its own project.
+allocator_password: quads
+```
+* HIL is a RESTful api micro-service. I have written a client library to make it easy for other systems (like QUADS) to consume these APIs.
+* Following modifications were done to introduce HIL client library into QUADS code-base.
+ * Copied the [hil client library](https://github.com/CCI-MOC/hil/tree/master/hil/client) to quads as `quads/lib/hil_client_lib`
+ * Added a script to `quads/bin/initialize_hil.py` that is used by `quads/bin/quads-cli` to setup connection to HIL using relevant credentials.
+
+## List of calls added to QUADS (cli and api)
+ 
+* Later following calls were added to `quads/bin/quads-cli`, some of them required writing **new APIs in QUADS**.
+```bash
+  --ls-allocator        Outputs name of the external allocator 
+  --ls-hil-nodes        lists all nodes available with HIL
+  --ls-allocated-nodes  lists nodes allocated to QUADS project with HIL
+  --ls-allocated-networks
+                        lists networks allocated to QUADS project with HIL
+  --allocator ALLOCATOR
+                        Defined allocator for a host or cloud
+  --fetch-allocated-nodes
+                        Fetches nodes from external allocator
+  --fetch-allocated-networks
+                        Fetches networks from external allocator
+ ```
+ * This calls interact with QUADS and HIL to get their work done. 
+ 
+ * Made changes to the QUADS data structure:
+ * Clouds and Hosts now have an additional attribute `allocator: `
+ 
+ 
+ * Also added new api calls corresponding and their corresponding calls:
+ 
+
+
 
 
 
