@@ -10,8 +10,7 @@ Spring 2018 status report
 * [DEMO 1 Datacenter in a laptop](#demo-1-datacenter-in-a-laptop)
 * [Introducing HIL into QUADS](#introducing-hil-into-quads) 
 * [New APIs and CLIs added to QUADS](#new-apis-and-clis-added-to-quads)
-* Changes made to QUADS datastructure (schedule.yaml)
-* DEMO: 
+* [DEMO 2 HIL managing network isolation for QUADS](#demo-2-hil-managing-network-isolation-for-quads)
   * Inquiring about the allocator (HIL)
   * Automatic host registration in QUADS from HIL
   * Automatic cloud registration in QUADS from HIL
@@ -98,15 +97,29 @@ allocator_password: quads
                         Fetches nodes from external allocator
   --fetch-allocated-networks
                         Fetches networks from external allocator
+  --modify-host MODIFYHOSTRESOURCE
+                        modify attributes of a host resource
+  --host-interfaces HOSTINTERFACES
+                        interfacename:mac_addresses separated by whitespace
+  --cloud-vlan CLOUDVLAN
+                        permissible integer range for vlans
+  --show-host HOSTINFO  All information regarding host
+  --show-cloud CLOUDINFO
+                        All information regarding cloud
+                       
  ```
- * This calls interact with QUADS and HIL to get their work done. 
+ * Modified some of the existing APIs:
+ `/api/v1/host` : Now requires: `--allocator` and `--host-interfaces` 
+ `/api/v1/cloud`: Now requrires: `--allocator` and `--cloud-vlan`
  
- * Made changes to the QUADS data structure:
- * Clouds and Hosts now have an additional attribute `allocator: `
+ * Added following APIs and corresponding CLIs:
+ `/api/v1/modifyhost`: Updates the cloud allocation of a given node. 
+ `/api/v1/allhostinfo`: returns all attributes specific to a host definition from `schedule.yaml` 
+ `/api/vi/allcloudinfo`: returns all attributes specific to a cloud definition from `schedule.yaml`
  
+ * Made changes to the QUADS data structure to accomodate the idea of external allocator.
  
- * Also added new api calls corresponding and their corresponding calls:
- 
+ ## DEMO 2 HIL managing network isolation for QUADS
 
 
 
