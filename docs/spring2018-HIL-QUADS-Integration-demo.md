@@ -52,6 +52,8 @@ sudo ./create_datacenter.sh -setDHCP redhat 200 10.1.200.2/24 10.1.200.10,10.1.2
 ```
 * Commands to confirm the successful setup:
 ```bash
+sudo ip netns list  # Nodes created
+sudo ovs-vsctl show # Network setup
 ps -ef |grep tap
 sudo ip netns identify <pid found from previous command>
 sudo ip netns exec
