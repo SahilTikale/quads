@@ -25,7 +25,7 @@ Spring 2018 status report
 ## Background
 
 * Hardware Isolation Layer or [HIL](https://github.com/CCI-MOC/hil) is a micro-service that performs the following functions:
-  * **Administer networks across different switches:** Provides users with a single switch agnostic interface to manage multitude of switches, without having to know any switch specific info.
+  * **Let users perform network isolation across different switches:** Provides users with a single switch agnostic interface to manage multitude of switches, without having to know any switch specific info.
   * **Proxies OBM interface:** Users can power cycle nodes, set boot devices etc., without having to know the IPMI passwords. 
   * **Provides user access control:** Unauthorized users cannot powercycle nodes or administer networks.
   
