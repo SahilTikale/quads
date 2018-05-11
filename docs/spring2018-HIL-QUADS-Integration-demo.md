@@ -111,13 +111,13 @@ allocator_password: quads
                        
  ```
  * Modified some of the existing APIs:
- `/api/v1/host` : Now requires: `--allocator` and `--host-interfaces` 
- `/api/v1/cloud`: Now requrires: `--allocator` and `--cloud-vlan`
+   * `/api/v1/host` : Now requires: `--allocator` and `--host-interfaces` 
+   * `/api/v1/cloud`: Now requrires: `--allocator` and `--cloud-vlan`
  
  * Added following APIs and corresponding CLIs:
- `/api/v1/modifyhost`: Updates the cloud allocation of a given node. 
- `/api/v1/allhostinfo`: returns all attributes specific to a host definition from `schedule.yaml` 
- `/api/vi/allcloudinfo`: returns all attributes specific to a cloud definition from `schedule.yaml`
+   * `/api/v1/modifyhost`: Updates the cloud allocation of a given node. 
+   * `/api/v1/allhostinfo`: returns all attributes specific to a host definition from `schedule.yaml` 
+   * `/api/vi/allcloudinfo`: returns all attributes specific to a cloud definition from `schedule.yaml`
  
  * Made changes to the QUADS data structure to accomodate the idea of external allocator.
  
