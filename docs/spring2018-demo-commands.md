@@ -17,10 +17,10 @@ Spring 2018 status report
   * Fetching per node info
   * Fetching per cloud info
   * Script that moves host between clouds
-* Going from here
+* [Summary](#summary)
 
-## If Time permits:
-* Things to do
+* [Things to do](#things-to-do)
+  * Will cover if time permits.
 
 ## Background
 
@@ -120,6 +120,31 @@ allocator_password: quads
  * Made changes to the QUADS data structure to accomodate the idea of external allocator.
  
  ## DEMO 2 HIL managing network isolation for QUADS
+ 
+ * The Demo showed how QUADS can work seamlessly allocate hosts and networks using HIL.
+ * Current demo worked with HIL controlling the openvswitch. Successfully demonstrates decoupling of QUADS from Juniper switch dependency 
+ * In production the workflow will be exactly same while making changes on the Juniper switch.
+ * Openvswitch driver in HIL demonstrates that:
+   * QUADS can have a 'almost' real continueous integration environment.
+   * Demonstrating new features on QUADS no longer requires dependency on ''real hardware''
+   * Useful for attracting new contributors to both QUADS and HIL. 
+ * HIL can manage the current juniper switch used by scale lab in production. I have submitted the driver for upstream acceptance in HIL.
+ 
+ ## Summary
+ 
+ * All these changes are available in the branch: https://github.com/SahilTikale/quads/tree/hosts_fromHIL
+ * Gerrit request is submitted upstream: https://github.com/redhat-performance/quads/issues/175
+ * Whenever I had doubts I raised issues: 
+ [#176](https://github.com/redhat-performance/quads/issues/176);   [#177](https://github.com/redhat-performance/quads/issues/177);   [#178](https://github.com/redhat-performance/quads/issues/178);   [#179](https://github.com/redhat-performance/quads/issues/179)
+
+## Things to do:
+ * Still to do before this code can be upstreamed:
+   * All calls should cover capturing error-conditions exhaustively.
+   * There is some space for code-refactoring. eg. there should be a separate code path for modifying attributes than registering new resources (--define-host vs --modify-host) 
+   * the script that moves host between clouds should be integrated in the QUADS maintstream code.
+   
+  
+ 
 
 
 
