@@ -147,8 +147,9 @@ def main(argv):
             data = r.json()
             if args.debug:
                 print(data)
-            for k in data:
-                print(k[args.action])
+            if args.action == 'ccuser':
+                for k in data:
+                    print(str(k['cloud'])+": "+str(k[args.action]))
             exit(0)
         else:
             # TODO: is this host or generic?
@@ -160,7 +161,7 @@ def main(argv):
         data = {'cloud': args.cloudresource,
                 'description': args.description,
                 'owner': args.cloudowner,
-                'cc': args.ccusers,
+                'ccuser': args.ccusers,
                 'qinq': args.qinq,
                 'wipe': args.wipe,
                 'ticket': args.cloudticket,

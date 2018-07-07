@@ -298,10 +298,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 if len(data['owner']) == 0:
                        result.append("Could not parse owner parameter")
-            if 'cc' not in data:
-                data['cc'] = [[]]
+            if 'ccuser' not in data:
+                data['ccuser'] = [[]]
             else:
-                if len(data['cc']) == 0:
+                if len(data['ccuser']) == 0:
                        result.append("Could not parse cc parameter")
             if 'ticket' not in data:
                 data['ticket'] = ['000000']
@@ -329,7 +329,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                                        data['description'][0],
                                        data['force'][0] == 'True',
                                        data['owner'][0],
-                                       data['cc'][0],
+                                       data['ccuser'][0],
                                        data['ticket'][0],
                                        data['qinq'][0],
                                        data['wipe'][0])
