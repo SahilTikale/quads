@@ -8,7 +8,7 @@ parser.add_argument("-g", "--node_group", help="input the cluster type")
 parser.add_argument("-q", "--qty", help="input the qty of Nodes required")
 parser.add_argument("-tt", "--duration", help="No of days that nodes will be used. ")
 parser.add_argument("-dt", "--start_date", nargs='+', type=int, help="Start date takes three values <year> <month> <day>")
-parser.add_argument("-st", "--start_time",nargs='+', type=int, help="Start time takes three values <hour> <minute>")
+parser.add_argument("-st", "--start_time",nargs='+', type=int, help="Start time takes two values <hour> <minute>")
 parser.parse_args()
 
 args = parser.parse_args()
@@ -25,7 +25,7 @@ if args.duration:
     duration=args.duration
     print "Duration: "+duration+" weeks"
 
-if args.start_date and args.start_time:
+if args.start_date and args.start_time and args.duration:
     st_date = args.start_date
     st_time = args.start_time
     startdate_n_time = dict(
@@ -33,9 +33,22 @@ if args.start_date and args.start_time:
         hour=st_time[0], minute=st_time[1]
     )
     inputdate=datetime.datetime(**startdate_n_time)
+    duration = datetime.timedelta(days=int(args.duration))
+    print "Provisioning starts on: {}".format(inputdate)
+    print "Provisioning duration ends on : {}".format(inputdate + duration)
+    
+elif args.start_date:
+    st_date = args.start_date
+    startdate_n_time = dict(
+        year=st_date[0], month=st_date[1], day=st_date[2]
+        )
+    inputdate=datetime.datetime(**startdate_n_time)
     print "Input Date is: {}".format(inputdate)
 
-if args.start_time:
+elif args.start_time:
+    print "Please provide a start_date. Aborting."
+    sys.exit(1)
+
     print args.start_time
     print type(args.start_time)
     t = datetime.time(args.start_time[0], args.start_time[1], args.start_time[2])
