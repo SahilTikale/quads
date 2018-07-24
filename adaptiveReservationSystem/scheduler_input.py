@@ -1,6 +1,7 @@
 import datetime
 import sys
 import argparse
+import json
 
 
 parser = argparse.ArgumentParser()
@@ -55,6 +56,55 @@ elif args.start_time:
     print t, t.hour, t.minute, t.second
     print type(t.hour)
     print ("The time is {} hour {} minute and {} second".format(t.hour, t.minute, t.second))
+    print "Creating a dictionary object from request."
+
+
+
+end_date = inputdate + duration
+end_time = [ end_date.year, end_date.month, end_date.day, end_date.hour, end_date.minute ]    
+sch_req = { 'group':args.node_group or None,
+          'qty':args.qty or None,
+          'begin':args.start_date+args.start_time or None,
+          'end': end_time,
+          'duration':args.duration
+    }
+sch_req_list = []
+sch_req_list.append(sch_req)
+
+with open('schedule_req_register.json', mode='w') as f:
+    json.dump(sch_req_list, f)
+
+
+config = json.loads(open('schedule_req_register.json').read())
+print config
+print type(config)
+
+#print json.dumps(sch_req)
+
+
+
+# Converting dictionary to json
+sch_req_json = json.dumps(sch_req)
+# Converting json back to dictionary
+sch_req_dict = json.loads(sch_req_json)
+
+#print sch_req_json
+#print sch_req_dict
+
+#print " "
+#print type(sch_req_dict)
+#print sch_req_dict['1']['group']
+
+
+
+#print end_date
+
+#print end_date.year
+
+
+#print "Ending on: {}".format(end_time)
+
+    
 
 sys.exit(0)
 
