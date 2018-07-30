@@ -60,12 +60,15 @@ if args.start_date and args.start_time and args.duration:
     print "Provisioning starts on: {}".format(inputdate)
     print "Provisioning duration ends on : {}".format(inputdate + duration)
     
-elif args.start_date:
+elif args.start_date and args.duration:
     st_date = args.start_date
     startdate_n_time = dict(
         year=st_date[0], month=st_date[1], day=st_date[2]
         )
+    duration = datetime.timedelta(days=int(args.duration))
     inputdate=datetime.datetime(**startdate_n_time)
+    print "Provisioning starts on: {}".format(inputdate)
+    print "Provisioning duration ends on : {}".format(inputdate + duration)
     print "Input Date is: {}".format(inputdate)
 
 elif args.start_time:
@@ -81,12 +84,15 @@ elif args.start_time:
     print "Creating a dictionary object from request."
 
 
-
+if args.start_time:
+    starting_at = args.start_date+args.start_time
+else:
+    starting_at = args.start_date
 end_date = inputdate + duration
 end_time = [ end_date.year, end_date.month, end_date.day, end_date.hour, end_date.minute ]    
 sch_req = { 'group':args.node_group or None,
           'qty':args.qty or None,
-          'begin':args.start_date+args.start_time or None,
+          'begin':starting_at or None,
           'end': end_time,
           'duration':args.duration
     }
