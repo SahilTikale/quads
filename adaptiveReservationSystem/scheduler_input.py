@@ -46,7 +46,7 @@ if args.qty:
 
 if args.duration:
     duration=args.duration
-    print "Duration: "+duration+" weeks"
+    print "Duration: "+duration+" days"
 
 if args.start_date and args.start_time and args.duration:
     st_date = args.start_date
