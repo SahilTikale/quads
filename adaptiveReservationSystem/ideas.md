@@ -29,4 +29,7 @@ provides the best possible requests that can be allocated to maximize overall ut
 ## Policy 3: Same cluster, variable quantity of nodes, priority based requests:
 
 
+..... More ideas will be documented here....
+
+
   
