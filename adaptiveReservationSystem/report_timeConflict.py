@@ -46,6 +46,8 @@ print " "
 sol_list = []
 conflict_list = []
 
+#import pdb; pdb.set_trace()
+
 for outer in newlist:
     #outer_req_no = newlist.index(outer)
     outer_begintime_input = dict(
@@ -70,23 +72,21 @@ for outer in newlist:
             #print "comparing endtime of job {}: {} to begin time of job {}: {}".format(
             #    newlist.index(inner), inner_endtime, newlist.index(outer), outer_begintime)
             if (inner_endtime <= outer_begintime):
-                print "comparing endtime of job {}: {} to begin time of job {}: {} No time conflict".format(
-                newlist.index(inner), inner_endtime, newlist.index(outer), outer_begintime)
+#                print "comparing endtime of job {}: {} to begin time of job {}: {} No time conflict".format(
+#                newlist.index(inner), inner_endtime, newlist.index(outer), outer_begintime)
                 no_conflict.append(newlist.index(inner))
                 no_conflict.append(newlist.index(outer))
-            else:
-                print " "
-                print "comparing endtime of job {}: {} to begin time of job {}: {} CONFLICTED".format(
-                newlist.index(inner), inner_endtime, newlist.index(outer), outer_begintime)
-                conflict.append(newlist.index(inner))
-            if len(no_conflict) > 0:
                 sol_list.append(no_conflict)
+            else:
+#                print " "
+#                print "comparing endtime of job {}: {} to begin time of job {}: {} CONFLICTED".format(
+#                newlist.index(inner), inner_endtime, newlist.index(outer), outer_begintime)
+                conflict.append(newlist.index(inner))
                 
 #    no_conflict.append(newlist.index(outer))
     if len(conflict) > 0:
         conflict.append(newlist.index(outer))
-#    sol_list.append(no_conflict)
-    conflict_list.append(conflict)
+        conflict_list.append(conflict)
 
 result = []
 for i in sol_list:
@@ -110,7 +110,7 @@ for i in result:
     for j in i:
         total_duration += int(newlist[j]['duration'])
 
-    print (i, total_duration)
+#    print (i, total_duration)
 
     if total_duration > max_duration:
         max_duration = total_duration
@@ -118,21 +118,70 @@ for i in result:
     elif total_duration == max_duration and (i, total_duration) not in max_duration_jobs:
         max_duration_jobs.append((i, total_duration))
 
+no_conflict_list_per_request = {}
+for job in newlist:
+    for pair in sol_list:
+#        print "running loop {} : {}".format(newlist.index(job), pair)
+        if newlist.index(job) in pair:
+            temp = list(pair)
+            temp.remove(newlist.index(job))
+            if newlist.index(job) not in no_conflict_list_per_request.keys():
+                no_conflict_list_per_request[newlist.index(job)] = temp
+            else:
+                no_conflict_list_per_request[newlist.index(job)].append(temp[0])
+#            print no_conflict_list_per_request
+
+#import pdb; pdb.set_trace()
+conflict_list_per_request = {}
+for job in newlist:
+    for sublist in conflict_list:
+        if newlist.index(job) in sublist:
+            temp = list(sublist)
+            temp.remove(newlist.index(job))
+            if newlist.index(job) not in conflict_list_per_request.keys():
+                conflict_list_per_request[newlist.index(job)] = temp
+            else:
+                conflict_list_per_request[newlist.index(job)].append(temp[-1])
+#            print no_conflict_list_per_request
+        
+            
+            
+            
 
 
 
-print " *********"
+        
+
+#print " *********"
 print " "
 print "Longest sequence of jobs that can be scheduled: {}".format(result[-1])
 print " "
 print " "
 print "Longest sequence of jobs with max cluster utilization: {}".format(max_duration_jobs)
-        
-    
+print " "
+print " "
+print "Per job_req no conflict list:"
+for i in no_conflict_list_per_request:
+    print "{}:   {}".format(i, no_conflict_list_per_request[i])
+print " "
+#print conflict_list_per_request
+
+print "Conflict list per job_req:"
+for i in no_conflict_list_per_request:
+    print "{}:   {}".format(i, no_conflict_list_per_request[i])
+print " "
     
 print " "
 print " "
-print "No conflict list: {}".format(sol_list)
-print "Conflict list: {}".format(conflict_list)
-print "Result: {}".format(result)
+#print "No conflict list: {}".format(sol_list)
+#print "Conflict list: {}".format(conflict_list)
+#print "Result: {}".format(result)
+
+
+
+
+
+
+
+
 
