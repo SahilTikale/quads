@@ -160,11 +160,14 @@ print " "
 print "Longest sequence of jobs with max cluster utilization: {}".format(max_duration_jobs)
 print " "
 print " "
+print " Other possible choices of job sequences: "
+for i in sol_list:
+    print i
+print " "
 print "Per job_req no conflict list:"
 for i in no_conflict_list_per_request:
     print "{}:   {}".format(i, no_conflict_list_per_request[i])
 print " "
-#print conflict_list_per_request
 
 print "Conflict list per job_req:"
 for i in no_conflict_list_per_request:
