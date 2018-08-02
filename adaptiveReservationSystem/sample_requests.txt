@@ -1,0 +1,11 @@
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 6 -tt 7
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 4 -tt 8
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 7 -tt 3
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 5 -tt 4
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 6 -tt 2
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 4 -tt 3
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 2 -tt 4
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 1 -tt 3
+python scheduler_input.py -g nodegroup01 -q 5 -dt 2018 1 6 -tt 7
+
+
