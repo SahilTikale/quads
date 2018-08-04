@@ -88,6 +88,8 @@ for outer in newlist:
         conflict.append(newlist.index(outer))
         conflict_list.append(conflict)
 
+print 'Conflict list: {}'.format(conflict_list)
+
 result = []
 for i in sol_list:
     x = 0
@@ -170,7 +172,7 @@ for i in no_conflict_list_per_request:
 print " "
 
 print "Conflict list per job_req:"
-for i in no_conflict_list_per_request:
+for i in conflict_list_per_request:
     print "{}:   {}".format(i, no_conflict_list_per_request[i])
 print " "
     

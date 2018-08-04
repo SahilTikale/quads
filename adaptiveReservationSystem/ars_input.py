@@ -4,7 +4,8 @@ import argparse
 import json
 from pathlib2 import Path
 
-backlog = Path("requestBackLog.json")
+#backlog = Path("requestBackLog.json")
+backlog = Path("temp.json")
 
 
 
@@ -38,6 +39,8 @@ args = parser.parse_args()
 
 if args.node_group:
     group_name=args.node_group
+    print " "
+    print " **** Input request in Human readable format. ****"
     print "group_name: "+group_name
     
 if args.qty:
@@ -110,9 +113,14 @@ else:
 #    json.dump(sch_req_list, f)
 
 
-request_list = json.loads(open('requestBackLog.json').read())
+request_list = json.loads(open(backlog.name).read())
+print " "
+print "**** Contents of the JSON file storing Job Requests. ****"
+print " "
 print request_list
-print type(request_list)
+print " "
+print " "
+#print type(request_list)
 
 #print json.dumps(sch_req)
 
@@ -145,7 +153,7 @@ sys.exit(0)
 
     
 
-
+ 
 
 if (len(sys.argv) == 1):
     print "give some command line arguments. "
