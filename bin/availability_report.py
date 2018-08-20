@@ -2,7 +2,7 @@ import yaml
 from datetime import datetime, timedelta
 from pathlib2 import Path
 
-data = Path("schedule.yaml")
+data = Path("../schedule.yaml")
 
 quads = {}
 print "size of quads dictionary: {}".format(len(quads))
@@ -11,7 +11,7 @@ def load_data_into_dict(data):
     global quads
 
     if data.is_file():
-        with open(data.name, 'r') as file:
+        with open(data.as_posix(), 'r') as file:
             quads = yaml.safe_load(file)
 
 
