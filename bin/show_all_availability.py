@@ -89,7 +89,7 @@ print "*****************************************"
 
 timestamps = avail_nodes.keys()
 #print timestamps
-#timestamps.sort()
+timestamps.sort()
 
 for timestamp in timestamps:
     dt_obj = datetime.fromtimestamp(float(timestamp))
