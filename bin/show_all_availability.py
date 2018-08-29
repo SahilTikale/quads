@@ -1,4 +1,5 @@
 import yaml
+import json
 from datetime import datetime, timedelta
 from pathlib2 import Path
 
@@ -11,6 +12,11 @@ def load_data_into_dict(data):
         with open(data.as_posix(), 'r') as file:
             quads = yaml.safe_load(file)
     return quads
+
+def save_data_to_json(data, filename):
+    """ Saves <data> (eg. dict, list etc) as json to <filename>. """
+    with open(filename, 'w') as file_name:
+        json.dump(data, file_name)
 
 def calculate_availability(date_obj, input_schedule):
     """ Calculate availability of nodes for one day given by <date_obj>
@@ -59,6 +65,7 @@ def merge_results(dict_1, dict_2):
 data = Path("../schedule.yaml")
 quads = load_data_into_dict(data)
 
+#date_obj = datetime(2018, 8, 15, 11, 34, 45, 247969)
 date_obj = datetime.today() #date object set to current time.
 date_obj = date_obj.replace(microsecond=0)
 timestamp = date_obj.strftime("%s")
@@ -69,16 +76,17 @@ total_nodes = len(quads['hosts'])
 upuntil_today = {}
 
 # Calculate all availability in the future:
-#import pdb; pdb.set_trace()
 while(len(quads['hosts']) > 0):
     print "Day: {} -- {}".format(interval, date_obj.strftime('%c'))
     only_today = calculate_availability(date_obj, quads)
     upuntil_today = merge_results(upuntil_today, only_today)
     avail_nodes[timestamp] = upuntil_today
     busy_nodes[timestamp] = len(quads['hosts'])
-#    avail_nodes[timestamp]['busy_nodes'] = len(quads)
     date_obj = date_obj + timedelta(days=interval)
     timestamp = date_obj.strftime("%s")
+
+
+save_data_to_json(avail_nodes, "all_availabilty.json")
 
 print "********* RESULT DICTIONARY *************"
 
@@ -104,8 +112,46 @@ for timestamp in timestamps:
     print " {:20s} :   {:5d}".format("Nodes still busy", busy_nodes[timestamp])
     print " "
     
+#print " ************* Raw data structure of available nodes ******************* "
+#print avail_nodes
+
+days = []
+DellR630 = []
+DellR620 = []
+R620 = []
+misc = []
+type_1029p = []
+total_avail = []
+busy = []
+
+for timestamp in timestamps:
+    dt_obj = datetime.fromtimestamp(float(timestamp))
+    free_nodes = 0
+    days.append(dt_obj.isoformat())
+    misc.append(len(avail_nodes[timestamp]['misc']))
+    free_nodes += len(avail_nodes[timestamp]['misc'])
+    R620.append(len(avail_nodes[timestamp]['R620']))
+    free_nodes += len(avail_nodes[timestamp]['R620'])
+    DellR620.append(len(avail_nodes[timestamp]['DellR620']))
+    free_nodes += len(avail_nodes[timestamp]['DellR620'])
+    DellR630.append(len(avail_nodes[timestamp]['DellR630']))
+    free_nodes += len(avail_nodes[timestamp]['DellR630'])
+    type_1029p.append(len(avail_nodes[timestamp]['1029p']))
+    free_nodes += len(avail_nodes[timestamp]['1029p'])
+    total_avail.append(free_nodes)
+    busy.append(340-free_nodes)
+
+
+print "*"*100
+print "                          **** Node availability per day, sorted per type. ****"
+print "*"*100
+
+print "{:20s} {:10s} {:10s} {:10s} {:10s} {:10s} {:12s} {:12s} ".format("Days_time", "DellR630", "DellR620", "R620", "misc", "1029p", "Total_free", "Still Busy")
+
+for day, x, y, z, m, t, free, not_free in zip(days, DellR630, DellR620, R620, misc, type_1029p, total_avail, busy):
+    print "{:20s} {:8d} {:10d} {:10d} {:10d} {:10d} {:12d} {:12d} ".format(day, x, y, z, m, t, free, not_free)
 
     
-    
-    
+print " "*100
+print "*"*100
 
