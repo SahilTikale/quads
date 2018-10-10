@@ -58,6 +58,7 @@ def main(argv):
 
     parser = argparse.ArgumentParser(description='Query current cloud for a given host')
     group = parser.add_mutually_exclusive_group()
+    group.add_argument('--show-reservations', dest='showresrv', action='store_true', default=None, help='report all current reservations')
     group.add_argument('--ls-owner', dest='lsowner', action='store_true', default=None, help='List owners')
     group.add_argument('--ls-cc-users', dest='lsccusers', action='store_true', default=None, help='List CC list')
     group.add_argument('--ls-ticket', dest='lsticket', action='store_true', default=None, help='List request ticket')
@@ -106,6 +107,57 @@ def main(argv):
     parser.add_argument('--host-type', dest='hosttype',type=str, default=None, help='Model/Make/Type of host DellR620  for example')
 
     args = parser.parse_args()
+    if args.showresrv:
+        #print "show current reservations is working at cli level."
+        url = quads_config["quads_base_url"] + "api/v1/showreserv/"
+        response = urllib2.urlopen(url, timeout=120)
+        data = json.loads(response.read())
+        filename = 'detail_reservation_report.json'
+        with open(filename, 'w') as file_name:
+            json.dump(data, file_name)
+
+        timestamps = data.keys()
+        timestamps.sort()
+        days = []
+        DellR630 = []
+        DellR620 = []
+        R620 = []
+        misc = []
+        type_1029p = []
+        total_avail = []
+        busy = []
+
+        for timestamp in timestamps:
+            dt_obj = datetime.datetime.fromtimestamp(float(timestamp))
+            free_nodes = 0
+            days.append(dt_obj.isoformat())
+            misc.append(len(data[timestamp]['misc']))
+            free_nodes += len(data[timestamp]['misc'])
+            R620.append(len(data[timestamp]['R620']))
+            free_nodes += len(data[timestamp]['R620'])
+            DellR620.append(len(data[timestamp]['DellR620']))
+            free_nodes += len(data[timestamp]['DellR620'])
+            DellR630.append(len(data[timestamp]['DellR630']))
+            free_nodes += len(data[timestamp]['DellR630'])
+            type_1029p.append(len(data[timestamp]['1029p']))
+            free_nodes += len(data[timestamp]['1029p'])
+            total_avail.append(free_nodes)
+            busy.append(340-free_nodes)
+
+
+        print "*"*100
+        print "                          **** Node availability per day, sorted per type. ****"
+        print "*"*100
+
+        print "{:20s} {:10s} {:10s} {:10s} {:10s} {:10s} {:12s} {:12s} ".format("Days_time", "DellR630", "DellR620", "R620", "misc", "1029p", "Total_free", "Still Busy")
+
+        for day, x, y, z, m, t, free, not_free in zip(days, DellR630, DellR620, R620, misc, type_1029p, total_avail, busy):
+            print "{:20s} {:8d} {:10d} {:10d} {:10d} {:10d} {:12d} {:12d} ".format(day, x, y, z, m, t, free, not_free)
+
+
+        print " "*100
+        print "*"*100
+        exit(0)
     if args.lshosts:
         url = quads_config["quads_base_url"] + "api/v1/lshosts/"
         response = urllib2.urlopen(url, timeout=120)
