@@ -127,7 +127,7 @@ function craft_future_initial_message() {
     ircbot_ipaddr=${quads["ircbot_ipaddr"]}
     ircbot_port=${quads["ircbot_port"]}
     ircbot_channel=${quads["ircbot_channel"]}
-    cloudinfo="$($quads --full-summary | grep $env_to_report)"
+    futurecloudinfo="$($quads --full-summary | grep $env_to_report | sed 's/.*(\(.*\))/\1/g')"
     report_file=${env_to_report}-${owner}-pre-initial-$($quads --ls-ticket --cloud-only ${env_to_report})
     additional_cc="$(for cc in $($quads --ls-cc-users --cloud-only ${env_to_report} | sed 's/,/ /g') ; do echo $cc | sed "s/$/@${quads["domain"]}/" ; done)"
     cc_field=${quads["report_cc"]}
@@ -146,11 +146,15 @@ Reply-To: dev-null@${quads["domain"]}
 
 Greetings Citizen,
 
-You've been allocated a new environment!  The environment is not
-yet ready for use but you are being notified ahead of time that
-it is being prepared.
+A new future environment has been allocated for you in the system!
+This means that sometime in the future you'll be given a working
+schedule and Scale Lab assignment that will belong inside this
+unique environment.
 
-$cloudinfo
+$futurecloudinfo
+
+This is informational only, letting you know that hosts and
+your dedicated network will be created for you at a future date.
 
 When your environment is ready and your hardware/network has
 passed automated validation it will be released to you.
@@ -173,7 +177,7 @@ EOI
             # send IRC notification
             # We are disabling this as it's noisy when we define a lot of
             # assignments, you may find it useful however.
-            #printf "$ircbot_channel QUADS: $cloudinfo is defined and upcoming! - http://${quads["wp_wiki"]}/assignments/#$env_to_report" | nc -w 1 $ircbot_ipaddr $ircbot_port
+            #printf "$ircbot_channel QUADS: $futurecloudinfo is defined and upcoming! - http://${quads["wp_wiki"]}/assignments/#$env_to_report" | nc -w 1 $ircbot_ipaddr $ircbot_port
             :
         fi
     fi

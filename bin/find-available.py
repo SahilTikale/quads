@@ -3,6 +3,7 @@
 # e.g. find 10 nodes for 20 consecutive days
 # ./find-availably.py -c 10 -d 20
 
+import datetime
 import itertools
 import string
 import argparse
@@ -10,6 +11,7 @@ import os
 import sys
 import array
 import yaml
+import threading
 from subprocess import call
 from subprocess import check_call
 
@@ -62,7 +64,8 @@ def avail_for(start_day, n, duration):
 
     if debug:
         print "DEBUG: avail_for called with : start_days = " + str(start_day) + ", n = " + str(n) + ", duration = " + str(duration)
-    datecommand = "date -d \"today + " + str(start_day) + " days \" '+%Y-%m-%d 08:00'"
+
+    datecommand = "date -d \"today + " + str(start_day) + " days \" '+%Y-%m-%d 22:00'"
     datestring = os.popen(datecommand).read().rstrip('\n')
     schedulepycommand = quads["install_dir"] + "/bin/quads-cli --cloud-only cloud01 --date \"" + datestring + "\""
     if limited != None:
@@ -85,14 +88,14 @@ def avail_for(start_day, n, duration):
 		# we are iterating over them.
         for item in itertools.combinations(i, n):
             fail = False
-			# k is a single host in the combination (actually the index)
+		# k is a single host in the combination (actually the index)
             for k in item:
-				# here we check that the host stays in cloud01 (in other words available)
-				# for the duration of days we are requesting
+			# here we check that the host stays in cloud01 (in other words available)
+			# for the duration of days we are requesting
                 if fail:
                     break
                 for t in range(start_day, (start_day + duration)):
-                    datecommand = "date -d \"today + " + str(t) + " days \" '+%Y-%m-%d 08:00'"
+                    datecommand = "date -d \"today + " + str(t) + " days \" '+%Y-%m-%d 22:00'"
                     datestring = os.popen(datecommand).read().rstrip('\n')
                     schedulepycommand = quads["install_dir"] + "/bin/quads-cli --host " + myresult[k] + " --date \"" + datestring + "\""
                     if debug:
@@ -108,6 +111,18 @@ def avail_for(start_day, n, duration):
         print "DEBUG: avail_for return(1)"
     return 1
 
+class Faster(threading.Thread):
+    def __init__(self,limited,increment):
+        self.datestring = "%s 22:00".format(datetime.date.today() + datetime.timedelta(days=increment))
+        self.schedulepycommand = quads["install_dir"] + "/bin/quads-cli --cloud-only cloud01 --date \"" + self.datestring + "\""
+        if limited != None:
+            self.schedulepycommand += "| egrep '" + limited + "'"
+        self.schedulepycommand += "| wc -l"
+        threading.Thread.__init__(self)
+    def run(self):
+        schedulepystring = os.popen(self.schedulepycommand).read().rstrip('\n')
+        return int(schedulepystring)
+
 def find_date(node_count, for_days):
     global debug
     global quads
@@ -115,14 +130,8 @@ def find_date(node_count, for_days):
     count = 0
     increment = 0
     while count < node_count and avail_for(increment, node_count, for_days) != 0:
-        datecommand = "date -d \"today + " + str(increment) + " days \" '+%Y-%m-%d 08:00'"
-        datestring = os.popen(datecommand).read().rstrip('\n')
-        schedulepycommand = quads["install_dir"] + "/bin/quads-cli --cloud-only cloud01 --date \"" + datestring + "\""
-        if limited != None:
-            schedulepycommand += "| egrep '" + limited + "'"
-        schedulepycommand += "| wc -l"
-        schedulepystring = os.popen(schedulepycommand).read().rstrip('\n')
-        count = int(schedulepystring)
+        run_faster = Faster(limited,increment)
+        count = run_faster.start()
         if count < node_count:
             if debug:
                 print "DEBUG: only " + str(count) + " nodes available. Continuing"
@@ -133,11 +142,11 @@ def find_date(node_count, for_days):
     return increment
 
 first_avail = find_date(count, days)
-datecommand = "date -d \"today + " + str(first_avail) + " days \" '+%Y-%m-%d 08:00'"
+datecommand = "date -d \"today + " + str(first_avail) + " days \" '+%Y-%m-%d 22:00'"
 startdatestring = os.popen(datecommand).read().rstrip('\n')
 print "=================="
 print "First available date = " + startdatestring
-datecommand = "date -d \"today + " + str(first_avail + days) + " days \" '+%Y-%m-%d 08:00'"
+datecommand = "date -d \"today + " + str(first_avail + days) + " days \" '+%Y-%m-%d 22:00'"
 if debug:
     print "DEBUG: datecommand for end date = " + datecommand
 enddatestring = os.popen(datecommand).read().rstrip('\n')

@@ -22,8 +22,8 @@ gather_dell_configs=${quads["gather_dell_configs"]}
 function print_header() {
     cat <<EOF
 
-|  SystemHostname |  OutOfBand  |  DateStartAssignment  |  DateEndAssignment  | TotalDuration  | TimeRemaining |  Graph  |
-|-----------------|:-----------:|:---------------------:|:-------------------:|:--------------:|:-------------:|:--------|
+|  SystemHostname |  OutOfBand  |  DateStartAssignment  |  DateEndAssignment  | TotalDuration  | TimeRemaining |
+|-----------------|:-----------:|:---------------------:|:-------------------:|:--------------:|:-------------:|
 EOF
 }
 
@@ -47,19 +47,19 @@ function print_summary() {
    tmpsummary=$(mktemp /tmp/cloudSummaryXXXXXX)
    if [ "${gather_ansible_facts}" == "true" ]; then
        if [ "${gather_dell_configs}" == "true" ]; then
-           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **HWFACTS** | **DELLCFG** |"
-           echo "|----------|-------------|-----------|--------------------|----------------|---------------|--------------|"
+           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **HWFACTS** | **QinQ** | **DELLCFG** |"
+           echo "|----------|-------------|-----------|--------------------|----------------|---------------|--------------|----------|"
        else
-           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **HWFACTS** |"
-           echo "|----------|-------------|-----------|--------------------|----------------|---------------|"
+           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **HWFACTS** | **QinQ** |"
+           echo "|----------|-------------|-----------|--------------------|----------------|---------------|----------|"
        fi
    else
        if [ "${gather_dell_configs}" == "true" ]; then
-           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **DELLCFG** |"
-           echo "|----------|-------------|-----------|--------------------|----------------|--------------|"
+           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **QinQ** |  **DELLCFG** |"
+           echo "|----------|-------------|-----------|--------------------|----------------|--------------|----------|"
        else
-           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** |"
-           echo "|----------|-------------|-----------|--------------------|----------------|"
+           echo "| **NAME** | **SUMMARY** | **OWNER** | **REQUEST** | **INSTACKENV** | **QinQ** |"
+           echo "|----------|-------------|-----------|--------------------|----------------|---------|"
        fi
    fi
    $quads --summary | while read line ; do
@@ -67,6 +67,7 @@ function print_summary() {
       desc=$(echo $(echo $line | awk -F: '{ print $2 }'))
       owner=$($quads --ls-owner --cloud-only $name)
       rt=$($quads --ls-ticket --cloud-only $name)
+      qinq=$($quads --cloud-only $name --ls-qinq)
       cloud_specific_tag="${name}_${owner}_${rt}"
       if [ "$rt" ]; then
           link="<a href=${rt_url}?id=$rt target=_blank>$rt</a>"
@@ -98,15 +99,15 @@ function print_summary() {
           ansible_facts_link="${quads_url}/underconstruction/"
         fi
         if [ "$name" == "cloud01" ]; then
-            echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | | |"
-		else
-            echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | <a href=$instack_link target=_blank>$style_tag_start$instack_text$style_tag_end</a> | <a href=$ansible_facts_link target=_blank>${factstyle_tag_start}inventory$factstyle_tag_end</a> |"
+            echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | | | |"
+        else
+            echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | <a href=$instack_link target=_blank>$style_tag_start$instack_text$style_tag_end</a> | <a href=$ansible_facts_link target=_blank>${factstyle_tag_start}inventory$factstyle_tag_end</a> | $qinq |"
 		fi
       else
         if [ "$name" == "cloud01" ]; then
-        	echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | |"
+        	echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | | |"
 		else
-        	echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | <a href=$instack_link target=_blank>$style_tag_start$instack_text$style_tag_end</a> |"
+        	echo -n "| [$style_tag_start$name$style_tag_end](#${name}) | $desc | $owner | $link | <a href=$instack_link target=_blank>$style_tag_start$instack_text$style_tag_end</a> | $qinq |"
 		fi
       fi
       if [ "${gather_dell_configs}" == "true" ]; then
@@ -234,7 +235,7 @@ function add_row() {
     fi
 
 
-    echo "| $short_host | <a href=http://mgmt-$1/ target=_blank>console</a> | $datestart | $dateend | $totaltime | $totaltimeleft | |"
+    echo "| $short_host | <a href=http://mgmt-$1/ target=_blank>console</a> | $datestart | $dateend | $totaltime | $totaltimeleft |"
 }
 
 # assume hostnames are the format "<rackname>-h<U location>-<type>"
