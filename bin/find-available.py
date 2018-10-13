@@ -52,6 +52,8 @@ load_quads_config()
 
 
 def avail_for(start_day, n, duration):
+    import pdb; pdb.set_trace()
+
     global hostset
     global hostnames
     global limited

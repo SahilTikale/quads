@@ -118,29 +118,61 @@ def main(argv):
 
         timestamps = data.keys()
         timestamps.sort()
+        ## Uncomment the following for loop to check if all types are reported correctly.
+#        for timestamp in timestamps:
+#            dt_obj = datetime.datetime.fromtimestamp(float(timestamp))
+#            print " "
+#            print "Availability on {}".format(dt_obj.strftime('%c'))
+#            print "Node availability Type wise: "
+#            for node_types in data[timestamp].keys():
+#                print " {:20s} :   {:5d}".format(node_types, len(data[timestamp][node_types]))
+#
+#            print "*"*35
+#            print " "
+
         days = []
-        DellR630 = []
-        DellR620 = []
-        R620 = []
-        misc = []
+        r620 = []
+        r630 = []
+        r730xd = []
+        r930 = []
+        type_6018r = []
+        type_6048r = []
+        type_1028r = []
         type_1029p = []
         total_avail = []
         busy = []
+        print timestamps
+        print " "
+        print len(timestamps) 
 
         for timestamp in timestamps:
             dt_obj = datetime.datetime.fromtimestamp(float(timestamp))
             free_nodes = 0
             days.append(dt_obj.isoformat())
-            misc.append(len(data[timestamp]['misc']))
-            free_nodes += len(data[timestamp]['misc'])
-            R620.append(len(data[timestamp]['R620']))
-            free_nodes += len(data[timestamp]['R620'])
-            DellR620.append(len(data[timestamp]['DellR620']))
-            free_nodes += len(data[timestamp]['DellR620'])
-            DellR630.append(len(data[timestamp]['DellR630']))
-            free_nodes += len(data[timestamp]['DellR630'])
-            type_1029p.append(len(data[timestamp]['1029p']))
-            free_nodes += len(data[timestamp]['1029p'])
+            if 'r620' in data[timestamp].keys():
+                r620.append(len(data[timestamp]['r620']))
+                free_nodes += len(data[timestamp]['r620'])
+            if 'r630' in data[timestamp].keys():
+                r630.append(len(data[timestamp]['r630']))
+                free_nodes += len(data[timestamp]['r630'])
+            if 'r730xd' in data[timestamp].keys():
+                r730xd.append(len(data[timestamp]['r730xd']))
+                free_nodes += len(data[timestamp]['r730xd'])
+            if 'r930' in data[timestamp].keys():
+                r930.append(len(data[timestamp]['r930']))
+                free_nodes += len(data[timestamp]['r930'])
+            if '6018r' in data[timestamp].keys():
+                type_6018r.append(len(data[timestamp]['6018r']))
+                free_nodes += len(data[timestamp]['6018r'])
+            if '6048r' in data[timestamp].keys():
+                type_6048r.append(len(data[timestamp]['6048r']))
+                free_nodes += len(data[timestamp]['6048r'])
+            if '1028r' in data[timestamp].keys():
+                type_1028r.append(len(data[timestamp]['1028r']))
+                free_nodes += len(data[timestamp]['1028r'])
+            if '1029p' in data[timestamp].keys():
+                type_1029p.append(len(data[timestamp]['1029p']))
+                free_nodes += len(data[timestamp]['1029p'])
             total_avail.append(free_nodes)
             busy.append(340-free_nodes)
 
@@ -149,10 +181,16 @@ def main(argv):
         print "                          **** Node availability per day, sorted per type. ****"
         print "*"*100
 
-        print "{:20s} {:10s} {:10s} {:10s} {:10s} {:10s} {:12s} {:12s} ".format("Days_time", "DellR630", "DellR620", "R620", "misc", "1029p", "Total_free", "Still Busy")
+        print "{:20s} {:10s} {:10s} {:10s} {:10s} {:10s} {:10s} {:10s} {:10s} {:12s} {:12s} ".format(
+                "Days_time", "r620", "r630", "r730xd", "r930", "6018r", "6048r", "1028r", "1029p", 
+                "Total_free", "Still Busy")
 
-        for day, x, y, z, m, t, free, not_free in zip(days, DellR630, DellR620, R620, misc, type_1029p, total_avail, busy):
-            print "{:20s} {:8d} {:10d} {:10d} {:10d} {:10d} {:12d} {:12d} ".format(day, x, y, z, m, t, free, not_free)
+        for day, x, y, z, m, n, o, p, q, free, not_free in zip(
+                days, r620, r630, r730xd, r930, type_6018r, type_6048r, type_1028r, type_1029p,  
+                total_avail, busy
+                ):
+            print "{:20s} {:8d} {:10d} {:10d} {:10d} {:10d} {:10d} {:10d} {:10d} {:12d} {:12d} ".format(day, x, y, z, m, n, o, p, q, free, not_free
+                    )
 
 
         print " "*100
