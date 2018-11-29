@@ -5,11 +5,18 @@
 # spare pool name. e.g. where your unused systems rest
 spare_pool_name: cloud01
 
-install_dir: /opt/quads
-data_dir: /opt/quads/data
+install_dir: /home/jack/git/quads
+data_dir: /home/jack/git/quads
 domain: example.com
-log: /opt/quads/log/quads.log
-quads_base_url: http://127.0.0.1:8080/
+log: /home/jack/git/quads/log/quads.log
+quads_base_url: http://127.0.0.1:8083/
+
+#Default values
+#install_dir: /opt/quads
+#data_dir: /opt/quads/data
+#domain: example.com
+#log: /opt/quads/log/quads.log
+#quads_base_url: http://127.0.0.1:8080/
 
 # Enable Elasticsearch indexing
 elastic_stats_enabled: false
