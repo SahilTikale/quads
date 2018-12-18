@@ -76,9 +76,9 @@ def main():
     data = Path("schedule.yaml")
     quads = load_data_into_dict(data)
 # For testing set the following date_obj to any date in past.
-#    date_obj = datetime(2018, 8, 20, 11, 34, 45, 247969)
+    date_obj = datetime(2018, 8, 15, 11, 34, 45, 247969)
 # For production use comment out the above line and uncomment the line below.
-    date_obj = datetime.today() #date object set to current time.
+#    date_obj = datetime.today() #date object set to current time.
     date_obj = date_obj.replace(microsecond=0)
     timestamp = date_obj.strftime("%s")
     avail_nodes = {} # node availability per day will be found here.

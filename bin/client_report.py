@@ -38,9 +38,9 @@ def report_all_availability(json_data):
     type_1029p = []
     total_avail = []
     busy = []
-    print timestamps
+#    print timestamps
     print " "
-    print len(timestamps)
+#    print len(timestamps)
 
     for timestamp in timestamps:
         dt_obj = datetime.datetime.fromtimestamp(float(timestamp))
