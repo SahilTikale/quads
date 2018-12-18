@@ -11,13 +11,6 @@ domain: example.com
 log: /home/jack/git/quads/log/quads.log
 quads_base_url: http://127.0.0.1:8083/
 
-#Default values
-#install_dir: /opt/quads
-#data_dir: /opt/quads/data
-#domain: example.com
-#log: /opt/quads/log/quads.log
-#quads_base_url: http://127.0.0.1:8080/
-
 # Enable Elasticsearch indexing
 elastic_stats_enabled: false
 elastic_host: localhost
@@ -40,7 +33,7 @@ ircbot_port: 5050
 ircbot_channel: #yourchannel
 
 # wordpress wiki
-wp_wiki: http://wiki.example.com/xmlrpc.php
+wp_wiki: wiki.example.com
 wp_username: wikiadmin
 wp_password: wikipassword
 
@@ -49,10 +42,6 @@ wp_wiki_main_title: Lab Dashboard
 wp_wiki_main_page_id: 4
 wp_wiki_assignments_title: assignments
 wp_wiki_assignments_page_id: 357
-# these values are used for auto-generation of a VLAN wiki page markdown
-# when routable public VLANs are required (--extnet)
-wp_wiki_vlans_title: Public VLAN Allocations
-wp_wiki_vlans_page_id: 14244
 # optional management of wordpress content via git repo
 wp_wiki_git_manage: false
 wp_wiki_git_repo_path: /opt/quads/git/wiki
@@ -66,12 +55,6 @@ quads_url: http://quads.scalelab.example.com
 # foreman URL
 foreman_url: http://foreman.example.com/hosts/
 foreman_api_url: https://foreman.example.com/api/v2
-foreman_username: admin
-foreman_password: password
-# set this to true if you want to check Foreman for faulty hosts
-# prior to scheduling e.g. --add-schedule.  Requires host parameter of
-# "broken_state: true/false" for each QUADS-managed host
-foreman_check_host_health: false
 
 # omit these hosts (used for wiki generation)
 # These are typically hosts known to your foreman that you don't
@@ -154,15 +137,7 @@ visual_colors:
   cloud21: -1 texture03.png 0
   cloud22: -1 texture04.png 0
   cloud23: -1 texture05.png 0
-  cloud24: -1 texture06.png 0
-  cloud25: -1 texture07.png 0
-  cloud26: -1 texture08.png 0
-  cloud27: -1 texture09.png 0
-  cloud28: -1 texture10.png 0
-  cloud29: -1 texture11.png 0
-  cloud30: -1 texture12.png 0
-  cloud31: -1 texture13.png 0
-  cloud32: -1 texture14.png 0
+  cloud24: 0 0 0
 
 # parameter to designate "undercloud" (ignored) hosts
 # for overcloud instackenv.json generation as well as
@@ -183,6 +158,3 @@ foreman_director_parameter: nullos
 # OpenStack # Director-deployed machines but
 # this isn't used for other purposes.
 ansible_max_proc: 60
-
-# Do you have managed PDUs?
-pdu_management: false
